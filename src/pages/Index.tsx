@@ -1,618 +1,480 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
 
-const HERO_BG = "https://cdn.poehali.dev/projects/e9234494-31a6-4374-b4b7-bda5385165ef/files/ec5ee1ea-e67c-44e9-b328-15f4e101445e.jpg";
+const GOLD_BG = "https://cdn.poehali.dev/projects/e9234494-31a6-4374-b4b7-bda5385165ef/files/89d30891-7abf-4770-ab1c-a366995e5a1d.jpg";
+const FOUNDER_PHOTO = "https://cdn.poehali.dev/projects/e9234494-31a6-4374-b4b7-bda5385165ef/bucket/45b1bed5-c9ba-42b8-b0bc-d5f6c8893b1e.png";
 
-const PLATFORMS = [
-  { name: "Spotify", emoji: "🎵" },
-  { name: "Apple Music", emoji: "🍎" },
-  { name: "ВКонтакте", emoji: "🎶" },
-  { name: "Яндекс Музыка", emoji: "🎸" },
-  { name: "SoundCloud", emoji: "☁️" },
-  { name: "Deezer", emoji: "🎧" },
-  { name: "Tidal", emoji: "🌊" },
-  { name: "YouTube Music", emoji: "▶️" },
+const ARTISTS = [
+  "ТРИ ДНЯ ДОЖДЯ", "NALIM", "SLYKT", "PALMDROPOV",
+  "ARTEM SHILOVETS", "OPIUM2K", "044 ROSE", "OM.",
+  "YASMI", "DARK WAVE", "NOVELLA", "PRIZRAK",
 ];
 
-const PROMOTION_SERVICES = [
-  { icon: "Radio", title: "Вывод на радио", desc: "Попадание на федеральные и тематические радиостанции" },
-  { icon: "Users", title: "Фиты с артистами", desc: "Организуем коллаборации с нужными исполнителями" },
-  { icon: "Bookmark", title: "Пресейвы", desc: "Сбор пресейвов до релиза для взрывного старта" },
-  { icon: "Play", title: "Посев в TikTok", desc: "Интеграции у блогеров под ваш звук" },
-  { icon: "Music", title: "Плейлисты ВКонтакте", desc: "Посевы в пользовательских плейлистах" },
-  { icon: "Headphones", title: "Яндекс Музыка", desc: "Продвижение через закрытые чаты и редакционные плейлисты" },
-  { icon: "Target", title: "Таргетированная реклама", desc: "Ведение рекламных кампаний в соцсетях" },
-  { icon: "TrendingUp", title: "Топ чартов ВК и Яндекс", desc: "Гарантированный вывод в топ музыкальных чартов" },
+const PROMO_SERVICES = [
+  { emoji: "📻", label: "Вывод на радио" },
+  { emoji: "🎤", label: "Фиты с артистами" },
+  { emoji: "🔖", label: "Пресейвы" },
+  { emoji: "🎵", label: "Посев в TikTok" },
+  { emoji: "🎧", label: "Плейлисты ВКонтакте" },
+  { emoji: "🎸", label: "Яндекс Музыка" },
+  { emoji: "🎯", label: "Таргетированная реклама" },
+  { emoji: "📈", label: "Топ чартов ВК и Яндекс" },
 ];
 
-const GENRES = ["Хип-хоп", "Электронная", "Поп", "R&B", "Рок", "Инди", "Классика", "Джаз"];
+const ADVANTAGES = [
+  {
+    title: "ВСЕ ПЛОЩАДКИ",
+    desc: "ВАШ ТРЕК ПОЯВИТСЯ НА ВСЕХ СУЩЕСТВУЮЩИХ ПЛОЩАДКАХ И БУДЕТ ДОСТУПЕН ВО ВСЁМ МИРЕ, НА ВСЕХ УСТРОЙСТВАХ И ФОРМАТАХ",
+  },
+  {
+    title: "ВАШИ ПРАВА",
+    desc: "ВЫ ПОЛНОСТЬЮ СОХРАНЯЕТЕ АВТОРСКИЕ ПРАВА НА СВОЮ МУЗЫКУ И МОЖЕТЕ ВЫВЕСТИ ЗАРАБОТАННУЮ СУММУ В ЛЮБОЕ ВРЕМЯ",
+  },
+  {
+    title: "ПОДДЕРЖКА 24/7",
+    desc: "ОТВЕТИМ В ТЕЧЕНИЕ 3 ЧАСОВ. РАБОТАЕМ ПО ДОГОВОРУ. БЕСПЛАТНО ПРОДВИГАЕМ ВАШИ ТРЕКИ В РЕДАКТОРСКИЕ ПЛЕЙЛИСТЫ",
+  },
+];
 
-function EqBars({ color = "cyan" }: { color?: "cyan" | "purple" }) {
-  const heights = [40, 70, 55, 90, 45, 75, 60, 85, 50, 65];
+type ArtistPos = { top: string; left?: string; right?: string; delay: string; size: string };
+
+function FloatingArtists() {
+  const positions: ArtistPos[] = [
+    { top: "12%", left: "5%", delay: "0s", size: "13px" },
+    { top: "25%", right: "8%", delay: "1.2s", size: "15px" },
+    { top: "40%", left: "60%", delay: "2.5s", size: "12px" },
+    { top: "60%", left: "15%", delay: "0.8s", size: "14px" },
+    { top: "70%", right: "20%", delay: "3s", size: "13px" },
+    { top: "80%", left: "40%", delay: "1.8s", size: "11px" },
+    { top: "18%", left: "45%", delay: "4s", size: "14px" },
+    { top: "50%", right: "5%", delay: "2s", size: "12px" },
+  ];
   return (
-    <div className="flex items-end gap-[3px] h-12">
-      {heights.map((h, i) => (
-        <div
+    <>
+      {positions.map((pos, i) => (
+        <span
           key={i}
-          className="w-[4px] rounded-sm"
+          className="artist-name"
           style={{
-            height: `${h}%`,
-            background: color === "cyan" ? "var(--neon-cyan)" : "var(--neon-purple)",
-            animation: `bar-dance ${0.8 + i * 0.1}s ease-in-out infinite`,
-            animationDelay: `${i * 0.08}s`,
-            opacity: 0.7 + (i % 3) * 0.1,
+            top: pos.top,
+            left: pos.left,
+            right: pos.right,
+            animationDelay: pos.delay,
+            fontSize: pos.size,
           }}
-        />
+        >
+          {ARTISTS[i % ARTISTS.length]}
+        </span>
       ))}
-    </div>
-  );
-}
-
-function WaveDecor() {
-  return (
-    <svg viewBox="0 0 1440 80" className="w-full" preserveAspectRatio="none">
-      <path
-        d="M0,40 C180,80 360,0 540,40 C720,80 900,0 1080,40 C1260,80 1440,0 1440,40 L1440,80 L0,80 Z"
-        fill="rgba(0,229,255,0.06)"
-      />
-      <path
-        d="M0,55 C200,20 400,70 600,45 C800,20 1000,65 1200,40 C1320,28 1380,50 1440,45 L1440,80 L0,80 Z"
-        fill="rgba(180,74,255,0.04)"
-      />
-    </svg>
+    </>
   );
 }
 
 export default function Index() {
-  const [activeSection, setActiveSection] = useState<"distrib" | "promo" | "produc">("distrib");
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(["Spotify", "Apple Music"]);
-  const [releaseType, setReleaseType] = useState("single");
-  const [selectedGenre, setSelectedGenre] = useState("Хип-хоп");
-  const [step, setStep] = useState(1);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const togglePlatform = (name: string) => {
-    setSelectedPlatforms(prev =>
-      prev.includes(name) ? prev.filter(p => p !== name) : [...prev, name]
-    );
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setMenuOpen(false);
   };
 
   return (
-    <div className="min-h-screen wave-bg text-white font-montserrat">
+    <div className="min-h-screen font-oswald" style={{ background: "var(--clr-black)", color: "var(--clr-white)" }}>
 
-      {/* NAV */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-4"
-        style={{ background: "rgba(8,12,20,0.85)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--dark-border)" }}>
+      {/* ── NAV ── */}
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-5 py-4"
+        style={{ background: "rgba(17,17,17,0.95)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "var(--neon-cyan)" }}>
-            <span className="text-xs font-oswald font-bold" style={{ color: "var(--dark-base)" }}>З</span>
-          </div>
-          <span className="font-oswald font-bold text-xl tracking-widest neon-text-cyan">ЗВУК</span>
+          {/* Gold shard logo */}
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <polygon points="14,0 28,10 22,28 6,28 0,10" fill="#c9a84c" opacity="0.9" />
+            <polygon points="14,4 24,12 19,24 9,24 4,12" fill="#111" />
+            <text x="14" y="17" textAnchor="middle" fill="#c9a84c" fontSize="7" fontWeight="bold" fontFamily="Oswald">S</text>
+          </svg>
+          <span className="text-xl font-bold tracking-[0.15em] uppercase">SMART SM</span>
         </div>
 
-        <div className="hidden md:flex items-center gap-8">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="flex flex-col gap-[5px] p-2"
+            aria-label="menu"
+          >
+            <span className="block w-6 h-[2px] bg-white transition-all" style={{ transform: menuOpen ? "rotate(45deg) translate(5px,5px)" : "none" }} />
+            <span className="block w-6 h-[2px] bg-white transition-all" style={{ opacity: menuOpen ? 0 : 1 }} />
+            <span className="block w-6 h-[2px] bg-white transition-all" style={{ transform: menuOpen ? "rotate(-45deg) translate(5px,-5px)" : "none" }} />
+          </button>
+        </div>
+      </nav>
+
+      {/* ── MOBILE MENU ── */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-40 flex flex-col items-center justify-center gap-8 text-4xl font-bold tracking-widest uppercase"
+          style={{ background: "rgba(17,17,17,0.98)" }}>
           {[
             { id: "distrib", label: "Дистрибьюция" },
             { id: "promo", label: "Продвижение" },
             { id: "produc", label: "Продюсирование" },
+            { id: "founder", label: "О нас" },
           ].map(item => (
-            <button
-              key={item.id}
-              onClick={() => {
-                setActiveSection(item.id as "distrib" | "promo" | "produc");
-                document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="font-oswald text-sm tracking-wider transition-all duration-300"
-              style={{ color: activeSection === item.id ? "var(--neon-cyan)" : "rgba(255,255,255,0.6)" }}
-            >
+            <button key={item.id} onClick={() => scrollTo(item.id)}
+              className="hover:text-brand-red transition-colors">
               {item.label}
             </button>
           ))}
         </div>
+      )}
 
-        <button className="neon-btn-cyan px-5 py-2 rounded-lg text-sm hidden md:block">
-          Начать
-        </button>
-      </nav>
-
-      {/* HERO */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-        <div className="absolute inset-0">
-          <img
-            src={HERO_BG}
-            alt="hero"
-            className="w-full h-full object-cover opacity-30"
-          />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(8,12,20,0.5) 0%, rgba(8,12,20,0.95) 100%)" }} />
+      {/* ── HERO ── */}
+      <section className="relative min-h-screen flex flex-col justify-center overflow-hidden pt-20 px-5">
+        {/* Gold shards bg */}
+        <div className="absolute inset-0 overflow-hidden">
+          <img src={GOLD_BG} alt="" className="absolute right-0 bottom-0 w-2/3 h-full object-cover opacity-25 mix-blend-luminosity" />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(17,17,17,1) 40%, rgba(17,17,17,0.6) 100%)" }} />
         </div>
 
-        <div className="absolute top-1/3 left-1/4 w-64 h-64 rounded-full animate-pulse-glow"
-          style={{ background: "radial-gradient(circle, rgba(0,229,255,0.15) 0%, transparent 70%)", filter: "blur(40px)" }} />
-        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full animate-pulse-glow"
-          style={{ background: "radial-gradient(circle, rgba(180,74,255,0.12) 0%, transparent 70%)", filter: "blur(60px)", animationDelay: "1.5s" }} />
+        <FloatingArtists />
 
-        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
-          <div className="flex justify-center mb-6">
-            <EqBars color="cyan" />
+        <div className="relative z-10 max-w-2xl">
+          {/* Video block (thumbnail-style) */}
+          <div className="mb-10 rounded-lg overflow-hidden relative cursor-pointer group w-full max-w-sm"
+            onClick={() => scrollTo("founder")}>
+            <img
+              src={FOUNDER_PHOTO}
+              alt="Александр Травкин — основатель SMART SM"
+              className="w-full object-cover"
+              style={{ maxHeight: "220px", objectPosition: "top" }}
+            />
+            <div className="absolute inset-0 flex items-center justify-center"
+              style={{ background: "rgba(0,0,0,0.3)" }}>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center transition-transform group-hover:scale-110"
+                style={{ background: "#c0181b" }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                  <polygon points="5,3 19,12 5,21" />
+                </svg>
+              </div>
+            </div>
           </div>
 
-          <div className="animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            <p className="font-montserrat text-sm font-light tracking-[0.4em] mb-4" style={{ color: "var(--neon-cyan)" }}>
-              МУЗЫКАЛЬНАЯ ПЛАТФОРМА
-            </p>
-            <h1 className="font-oswald text-6xl md:text-8xl font-bold leading-none mb-4">
-              ТВО<span className="neon-text-cyan">Й</span> ЗВУК —
-            </h1>
-            <h1 className="font-oswald text-6xl md:text-8xl font-bold leading-none mb-8">
-              <span className="neon-text-purple">МИ</span>РУ
-            </h1>
-          </div>
-
-          <p className="font-montserrat text-lg md:text-xl font-light mb-12 animate-fade-in"
-            style={{ color: "rgba(255,255,255,0.65)", animationDelay: "0.3s" }}>
-            Дистрибьюция на все платформы&nbsp;·&nbsp;Продвижение&nbsp;·&nbsp;Продюсирование
+          <p className="text-sm tracking-[0.3em] mb-3" style={{ color: "rgba(255,255,255,0.45)" }}>
+            ПОСМОТРИ ЭТО ВИДЕО
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{ animationDelay: "0.5s" }}>
-            <button
-              className="neon-btn-cyan px-10 py-4 rounded-xl text-base"
-              onClick={() => document.getElementById("distrib")?.scrollIntoView({ behavior: "smooth" })}
-            >
-              Выгрузить релиз
-            </button>
-            <button
-              className="px-10 py-4 rounded-xl text-base font-oswald font-semibold tracking-wider transition-all duration-300 border"
-              style={{ borderColor: "var(--neon-purple)", color: "var(--neon-purple)" }}
-              onClick={() => document.getElementById("promo")?.scrollIntoView({ behavior: "smooth" })}
-            >
-              Продвижение
-            </button>
-          </div>
-        </div>
+          <h1 className="font-bold leading-none tracking-tight mb-2" style={{ fontSize: "clamp(44px, 10vw, 80px)" }}>
+            ВЫЛОЖИ<br />ТРЕК НА ВСЕ<br />ПЛОЩАДКИ,
+          </h1>
+          <h1 className="font-bold leading-none tracking-tight mb-10" style={{ fontSize: "clamp(44px, 10vw, 80px)", color: "var(--clr-gold)" }}>
+            И ПРОДАВАЙ<br />СВОЮ МУЗЫКУ<br />ВО ВСЁМ МИРЕ
+          </h1>
 
-        <div className="absolute bottom-0 left-0 right-0">
-          <WaveDecor />
-        </div>
-      </section>
-
-      {/* ===== SECTION 1: ДИСТРИБЬЮЦИЯ ===== */}
-      <section id="distrib" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="mb-16 text-center">
-          <p className="font-montserrat text-xs tracking-[0.5em] mb-3" style={{ color: "var(--neon-cyan)" }}>01 / ДИСТРИБЬЮЦИЯ</p>
-          <h2 className="font-oswald text-5xl md:text-7xl font-bold mb-4">
-            ВЫГРУЗИТЬ <span className="neon-text-cyan">РЕЛИЗ</span>
-          </h2>
-          <div className="section-divider mx-auto w-40 mt-6" />
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-8 items-start">
-          <div className="glass-card rounded-2xl p-8 neon-border-cyan border">
-            <div className="flex gap-2 mb-8">
-              {[1, 2, 3].map(s => (
-                <button
-                  key={s}
-                  onClick={() => setStep(s)}
-                  className="flex-1 py-2 rounded-lg font-oswald text-sm tracking-wider transition-all"
-                  style={{
-                    background: step === s ? "var(--neon-cyan)" : "var(--dark-border)",
-                    color: step === s ? "var(--dark-base)" : "rgba(255,255,255,0.4)",
-                  }}
-                >
-                  ШАГ {s}
-                </button>
-              ))}
-            </div>
-
-            {step === 1 && (
-              <div className="space-y-5 animate-fade-in">
-                <h3 className="font-oswald text-xl mb-4" style={{ color: "var(--neon-cyan)" }}>Информация о треке</h3>
-
-                <div>
-                  <label className="block text-xs tracking-wider mb-2" style={{ color: "rgba(255,255,255,0.5)" }}>НАЗВАНИЕ ТРЕКА</label>
-                  <input
-                    placeholder="Введите название..."
-                    className="w-full rounded-lg px-4 py-3 font-montserrat text-sm outline-none transition-all"
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--dark-border)", color: "white" }}
-                    onFocus={e => (e.target.style.borderColor = "var(--neon-cyan)")}
-                    onBlur={e => (e.target.style.borderColor = "var(--dark-border)")}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs tracking-wider mb-2" style={{ color: "rgba(255,255,255,0.5)" }}>ИСПОЛНИТЕЛЬ</label>
-                  <input
-                    placeholder="Имя артиста..."
-                    className="w-full rounded-lg px-4 py-3 font-montserrat text-sm outline-none transition-all"
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--dark-border)", color: "white" }}
-                    onFocus={e => (e.target.style.borderColor = "var(--neon-cyan)")}
-                    onBlur={e => (e.target.style.borderColor = "var(--dark-border)")}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs tracking-wider mb-3" style={{ color: "rgba(255,255,255,0.5)" }}>ТИП РЕЛИЗА</label>
-                  <div className="flex gap-3">
-                    {["single", "ep", "album"].map(t => (
-                      <button
-                        key={t}
-                        onClick={() => setReleaseType(t)}
-                        className="flex-1 py-2 rounded-lg font-oswald text-xs tracking-widest uppercase transition-all"
-                        style={{
-                          background: releaseType === t ? "rgba(0,229,255,0.15)" : "transparent",
-                          border: `1px solid ${releaseType === t ? "var(--neon-cyan)" : "var(--dark-border)"}`,
-                          color: releaseType === t ? "var(--neon-cyan)" : "rgba(255,255,255,0.4)",
-                        }}
-                      >
-                        {t === "single" ? "Сингл" : t === "ep" ? "EP" : "Альбом"}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs tracking-wider mb-3" style={{ color: "rgba(255,255,255,0.5)" }}>ЖАНР</label>
-                  <div className="flex flex-wrap gap-2">
-                    {GENRES.map(g => (
-                      <button
-                        key={g}
-                        onClick={() => setSelectedGenre(g)}
-                        className="px-3 py-1 rounded-full text-xs font-montserrat transition-all"
-                        style={{
-                          background: selectedGenre === g ? "rgba(0,229,255,0.2)" : "rgba(255,255,255,0.04)",
-                          border: `1px solid ${selectedGenre === g ? "var(--neon-cyan)" : "var(--dark-border)"}`,
-                          color: selectedGenre === g ? "var(--neon-cyan)" : "rgba(255,255,255,0.45)",
-                        }}
-                      >
-                        {g}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <button onClick={() => setStep(2)} className="neon-btn-cyan w-full py-3 rounded-xl text-sm mt-2">
-                  Далее →
-                </button>
-              </div>
-            )}
-
-            {step === 2 && (
-              <div className="space-y-5 animate-fade-in">
-                <h3 className="font-oswald text-xl mb-4" style={{ color: "var(--neon-cyan)" }}>Выбор платформ</h3>
-
-                <div className="grid grid-cols-2 gap-3">
-                  {PLATFORMS.map(p => (
-                    <button
-                      key={p.name}
-                      onClick={() => togglePlatform(p.name)}
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left"
-                      style={{
-                        background: selectedPlatforms.includes(p.name) ? "rgba(0,229,255,0.12)" : "rgba(255,255,255,0.03)",
-                        border: `1px solid ${selectedPlatforms.includes(p.name) ? "var(--neon-cyan)" : "var(--dark-border)"}`,
-                      }}
-                    >
-                      <span className="text-lg">{p.emoji}</span>
-                      <span className="font-montserrat text-xs" style={{ color: selectedPlatforms.includes(p.name) ? "var(--neon-cyan)" : "rgba(255,255,255,0.6)" }}>
-                        {p.name}
-                      </span>
-                      {selectedPlatforms.includes(p.name) && (
-                        <Icon name="Check" size={12} className="ml-auto" style={{ color: "var(--neon-cyan)" }} />
-                      )}
-                    </button>
-                  ))}
-                </div>
-
-                <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>
-                  Выбрано: {selectedPlatforms.length} из {PLATFORMS.length} платформ
-                </p>
-
-                <div className="flex gap-3">
-                  <button onClick={() => setStep(1)} className="flex-1 py-3 rounded-xl font-oswald text-sm tracking-wider border transition-all"
-                    style={{ borderColor: "var(--dark-border)", color: "rgba(255,255,255,0.5)" }}>
-                    ← Назад
-                  </button>
-                  <button onClick={() => setStep(3)} className="flex-1 neon-btn-cyan py-3 rounded-xl text-sm">
-                    Далее →
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {step === 3 && (
-              <div className="space-y-5 animate-fade-in">
-                <h3 className="font-oswald text-xl mb-4" style={{ color: "var(--neon-cyan)" }}>Загрузка файлов</h3>
-
-                <div
-                  className="border-2 border-dashed rounded-2xl p-10 text-center transition-all cursor-pointer"
-                  style={{ borderColor: "var(--dark-border)" }}
-                  onMouseEnter={e => (e.currentTarget.style.borderColor = "var(--neon-cyan)")}
-                  onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--dark-border)")}
-                >
-                  <Icon name="Upload" size={32} className="mx-auto mb-3" style={{ color: "var(--neon-cyan)" }} />
-                  <p className="font-montserrat text-sm mb-1" style={{ color: "rgba(255,255,255,0.7)" }}>
-                    Перетащите аудиофайл или нажмите
-                  </p>
-                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>WAV / FLAC · 44.1 kHz · 24 bit</p>
-                </div>
-
-                <div
-                  className="border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all"
-                  style={{ borderColor: "var(--dark-border)" }}
-                  onMouseEnter={e => (e.currentTarget.style.borderColor = "var(--neon-purple)")}
-                  onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--dark-border)")}
-                >
-                  <Icon name="Image" size={28} className="mx-auto mb-2" style={{ color: "var(--neon-purple)" }} />
-                  <p className="font-montserrat text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
-                    Обложка · 3000×3000 px · JPG / PNG
-                  </p>
-                </div>
-
-                <div className="flex gap-3">
-                  <button onClick={() => setStep(2)} className="flex-1 py-3 rounded-xl font-oswald text-sm tracking-wider border transition-all"
-                    style={{ borderColor: "var(--dark-border)", color: "rgba(255,255,255,0.5)" }}>
-                    ← Назад
-                  </button>
-                  <button className="flex-1 neon-btn-cyan py-3 rounded-xl text-sm">
-                    Отправить релиз 🚀
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Info side */}
-          <div className="space-y-6">
-            <div className="glass-card rounded-2xl p-6 border" style={{ borderColor: "var(--dark-border)" }}>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(0,229,255,0.15)" }}>
-                  <Icon name="Globe" size={18} style={{ color: "var(--neon-cyan)" }} />
-                </div>
-                <div>
-                  <p className="font-oswald text-sm tracking-wider">100+ ПЛАТФОРМ</p>
-                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>по всему миру</p>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {PLATFORMS.map(p => (
-                  <span key={p.name} className="text-xs px-2 py-1 rounded-full"
-                    style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.5)" }}>
-                    {p.emoji} {p.name}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {[
-              { icon: "Zap", color: "var(--neon-cyan)", title: "Быстрая модерация", desc: "Релиз выходит в течение 1–3 рабочих дней" },
-              { icon: "BarChart2", color: "var(--neon-purple)", title: "Аналитика в реальном времени", desc: "Отслеживайте прослушивания и доход" },
-              { icon: "DollarSign", color: "var(--neon-cyan)", title: "100% роялти — ваши", desc: "Мы не забираем процент с ваших доходов" },
-            ].map(item => (
-              <div key={item.title} className="glass-card rounded-xl p-5 border flex items-start gap-4 transition-all"
-                style={{ borderColor: "var(--dark-border)" }}>
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ background: `${item.color}20` }}>
-                  <Icon name={item.icon} size={18} style={{ color: item.color }} />
-                </div>
-                <div>
-                  <p className="font-oswald tracking-wider text-sm mb-1">{item.title}</p>
-                  <p className="text-xs font-light" style={{ color: "rgba(255,255,255,0.45)" }}>{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== SECTION 2: ПРОДВИЖЕНИЕ ===== */}
-      <section id="promo" className="py-24 px-6 md:px-12 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, var(--dark-base) 0%, #0a0818 50%, var(--dark-base) 100%)" }}>
-        <div className="absolute top-20 right-0 w-96 h-96 rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(180,74,255,0.1) 0%, transparent 70%)", filter: "blur(60px)" }} />
-
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-16 text-center">
-            <p className="font-montserrat text-xs tracking-[0.5em] mb-3" style={{ color: "var(--neon-purple)" }}>02 / ПРОДВИЖЕНИЕ</p>
-            <h2 className="font-oswald text-5xl md:text-7xl font-bold mb-4">
-              <span className="neon-text-purple">ПРОДВИЖЕНИЕ</span> МУЗЫКИ
-            </h2>
-            <p className="font-montserrat text-base font-light max-w-xl mx-auto" style={{ color: "rgba(255,255,255,0.5)" }}>
-              Комплексный вывод артиста на все ключевые площадки и в топ чарты
-            </p>
-            <div className="section-divider mx-auto w-40 mt-6"
-              style={{ background: "linear-gradient(90deg, transparent, var(--neon-purple), transparent)" }} />
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {PROMOTION_SERVICES.map((service, i) => (
-              <div
-                key={service.title}
-                className="glass-card rounded-2xl p-6 border cursor-pointer transition-all duration-300"
-                style={{ borderColor: "var(--dark-border)", animationDelay: `${i * 0.1}s` }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = "var(--neon-purple)";
-                  e.currentTarget.style.transform = "translateY(-4px)";
-                  e.currentTarget.style.boxShadow = "0 20px 40px rgba(180,74,255,0.15)";
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = "var(--dark-border)";
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
-              >
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                  style={{ background: "rgba(180,74,255,0.15)" }}>
-                  <Icon name={service.icon} size={20} style={{ color: "var(--neon-purple)" }} />
-                </div>
-                <h3 className="font-oswald text-sm tracking-wider mb-2">{service.title}</h3>
-                <p className="font-montserrat text-xs font-light leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>
-                  {service.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-12 glass-card rounded-2xl p-8 border neon-border-purple text-center">
-            <div className="flex justify-center mb-4">
-              <EqBars color="purple" />
-            </div>
-            <h3 className="font-oswald text-2xl mb-3">ХОЧЕШЬ ПАКЕТ ПРОДВИЖЕНИЯ?</h3>
-            <p className="font-montserrat text-sm mb-6" style={{ color: "rgba(255,255,255,0.5)" }}>
-              Расскажи о своём проекте — подберём оптимальную стратегию
-            </p>
-            <button className="neon-btn-purple px-10 py-4 rounded-xl text-base">
-              Получить предложение
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== SECTION 3: ПРОДЮСИРОВАНИЕ ===== */}
-      <section id="produc" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="mb-16 text-center">
-          <p className="font-montserrat text-xs tracking-[0.5em] mb-3" style={{ color: "var(--neon-pink)" }}>03 / ПРОДЮСИРОВАНИЕ</p>
-          <h2 className="font-oswald text-5xl md:text-7xl font-bold mb-4">
-            ПРОДЮСИРОВАНИЕ <span style={{ color: "var(--neon-pink)", textShadow: "0 0 20px rgba(255,63,164,0.5)" }}>АРТИСТА</span>
-          </h2>
-          <div className="section-divider mx-auto w-40 mt-6"
-            style={{ background: "linear-gradient(90deg, transparent, var(--neon-pink), transparent)" }} />
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Сведение и мастеринг */}
-          <div
-            className="glass-card rounded-2xl p-8 border transition-all duration-300"
-            style={{ borderColor: "var(--dark-border)" }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--neon-pink)"; e.currentTarget.style.boxShadow = "0 20px 40px rgba(255,63,164,0.1)"; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--dark-border)"; e.currentTarget.style.boxShadow = "none"; }}
+          <button className="red-btn py-4 px-8 text-lg rounded-sm mb-4 max-w-sm" onClick={() => scrollTo("distrib")}>
+            ВЫЛОЖИТЬ МУЗЫКУ
+          </button>
+          <button className="red-btn py-4 px-8 text-lg rounded-sm max-w-sm"
+            style={{ background: "transparent", border: "2px solid var(--clr-red)", color: "var(--clr-white)" }}
+            onClick={() => scrollTo("promo")}
           >
-            <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6"
-              style={{ background: "rgba(255,63,164,0.15)" }}>
-              <Icon name="Sliders" size={26} style={{ color: "var(--neon-pink)" }} />
-            </div>
-
-            <h3 className="font-oswald text-2xl mb-3" style={{ color: "var(--neon-pink)" }}>
-              СВЕДЕНИЕ И МАСТЕРИНГ
-            </h3>
-            <p className="font-montserrat text-sm font-light leading-relaxed mb-6" style={{ color: "rgba(255,255,255,0.55)" }}>
-              Профессиональная обработка звука: балансировка частот, динамическая обработка, финальный мастеринг для всех стриминговых платформ.
-            </p>
-
-            <div className="space-y-3 mb-8">
-              {["Студийное сведение треков", "Мастеринг под стриминги (Spotify, Apple Music)", "Исправление тональности и тайминга", "Stem-мастеринг"].map(feat => (
-                <div key={feat} className="flex items-center gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "var(--neon-pink)" }} />
-                  <span className="font-montserrat text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>{feat}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="rounded-xl p-4 mb-6" style={{ background: "rgba(255,63,164,0.05)", border: "1px solid rgba(255,63,164,0.15)" }}>
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-6 h-6 rounded-full flex items-center justify-center cursor-pointer"
-                  style={{ background: "var(--neon-pink)" }}>
-                  <Icon name="Play" size={10} style={{ color: "white" }} />
-                </div>
-                <span className="font-montserrat text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>Пример мастеринга</span>
-              </div>
-              <div className="flex items-end gap-[2px] h-10">
-                {Array.from({ length: 40 }).map((_, i) => {
-                  const h = Math.sin(i * 0.4) * 50 + 50;
-                  return (
-                    <div key={i} className="flex-1 rounded-sm" style={{
-                      height: `${h}%`,
-                      background: `rgba(255,63,164,${0.3 + (h / 100) * 0.5})`,
-                    }} />
-                  );
-                })}
-              </div>
-            </div>
-
-            <button
-              className="w-full py-3 rounded-xl font-oswald tracking-wider text-sm transition-all"
-              style={{ background: "rgba(255,63,164,0.15)", border: "1px solid var(--neon-pink)", color: "var(--neon-pink)" }}
-              onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,63,164,0.25)")}
-              onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,63,164,0.15)")}
-            >
-              Заказать сведение
-            </button>
-          </div>
-
-          {/* Создание обложки */}
-          <div
-            className="glass-card rounded-2xl p-8 border transition-all duration-300"
-            style={{ borderColor: "var(--dark-border)" }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--neon-pink)"; e.currentTarget.style.boxShadow = "0 20px 40px rgba(255,63,164,0.1)"; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--dark-border)"; e.currentTarget.style.boxShadow = "none"; }}
-          >
-            <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6"
-              style={{ background: "rgba(180,74,255,0.15)" }}>
-              <Icon name="Palette" size={26} style={{ color: "var(--neon-purple)" }} />
-            </div>
-
-            <h3 className="font-oswald text-2xl mb-3" style={{ color: "var(--neon-purple)" }}>
-              СОЗДАНИЕ ОБЛОЖКИ
-            </h3>
-            <p className="font-montserrat text-sm font-light leading-relaxed mb-6" style={{ color: "rgba(255,255,255,0.55)" }}>
-              Разработка уникального визуального образа для релиза — обложка, которая выделяется в потоке треков и цепляет с первого взгляда.
-            </p>
-
-            <div className="space-y-3 mb-8">
-              {["Дизайн обложки сингла / альбома", "Адаптация под все форматы платформ", "Фирменный стиль артиста", "Концепт и арт-ворк"].map(feat => (
-                <div key={feat} className="flex items-center gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "var(--neon-purple)" }} />
-                  <span className="font-montserrat text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>{feat}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 mb-6">
-              {[
-                { bg: "linear-gradient(135deg, #b44aff, #00e5ff)" },
-                { bg: "linear-gradient(135deg, #ff3fa4, #b44aff)" },
-                { bg: "linear-gradient(135deg, #00e5ff, #ff3fa4)" },
-              ].map((c, i) => (
-                <div key={i} className="aspect-square rounded-xl flex items-center justify-center"
-                  style={{ background: c.bg, opacity: 0.75 }}>
-                  <Icon name="Music" size={20} style={{ color: "rgba(255,255,255,0.9)" }} />
-                </div>
-              ))}
-            </div>
-
-            <button
-              className="w-full py-3 rounded-xl font-oswald tracking-wider text-sm transition-all"
-              style={{ background: "rgba(180,74,255,0.15)", border: "1px solid var(--neon-purple)", color: "var(--neon-purple)" }}
-              onMouseEnter={e => (e.currentTarget.style.background = "rgba(180,74,255,0.25)")}
-              onMouseLeave={e => (e.currentTarget.style.background = "rgba(180,74,255,0.15)")}
-            >
-              Заказать обложку
-            </button>
-          </div>
-        </div>
-
-        {/* Full package CTA */}
-        <div className="mt-10 rounded-2xl p-10 text-center relative overflow-hidden"
-          style={{ background: "linear-gradient(135deg, rgba(0,229,255,0.08), rgba(180,74,255,0.08), rgba(255,63,164,0.08))", border: "1px solid var(--dark-border)" }}>
-          <p className="font-montserrat text-xs tracking-[0.4em] mb-3" style={{ color: "rgba(255,255,255,0.4)" }}>ПОЛНЫЙ ПАКЕТ</p>
-          <h3 className="font-oswald text-3xl md:text-4xl mb-4">
-            ДИСТРИБЬЮЦИЯ + ПРОДВИЖЕНИЕ + ПРОДЮСИРОВАНИЕ
-          </h3>
-          <p className="font-montserrat text-sm mb-8" style={{ color: "rgba(255,255,255,0.45)" }}>
-            Всё в одном месте — от сырого файла до топа чартов
-          </p>
-          <button className="neon-btn-cyan px-12 py-4 rounded-xl text-base">
-            Обсудить полный пакет
+            НА ПЛОЩАДКАХ
           </button>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="py-12 px-6 md:px-12 text-center" style={{ borderTop: "1px solid var(--dark-border)" }}>
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "var(--neon-cyan)" }}>
-            <span className="text-xs font-oswald font-bold" style={{ color: "var(--dark-base)" }}>З</span>
+      {/* ── STATS BEIGE SECTION ── */}
+      <section className="beige-section relative overflow-hidden" style={{ clipPath: "polygon(0 4%, 100% 0%, 100% 96%, 0 100%)", padding: "80px 20px" }}>
+        <div className="max-w-2xl mx-auto">
+          <div className="mb-10">
+            <p className="text-5xl font-bold leading-none" style={{ color: "var(--clr-red)" }}>15 845</p>
+            <h2 className="font-bold leading-none mt-1" style={{ fontSize: "clamp(32px, 7vw, 56px)" }}>
+              АРТИСТОВ<br />ВЫКЛАДЫВАЮТ<br />ТРЕКИ ЧЕРЕЗ НАС
+            </h2>
           </div>
-          <span className="font-oswald font-bold text-xl tracking-widest neon-text-cyan">ЗВУК</span>
+
+          <div className="space-y-6">
+            {[
+              { shape: "M", label: "БЕСПЛАТНО ПРОДВИГАЕМ ВАШИ ТРЕКИ В РЕДАКТОРСКИЕ ПЛЕЙЛИСТЫ" },
+              { shape: "◆", label: "ОТВЕТИМ В ТЕЧЕНИЕ 3 ЧАСОВ, РАБОТАЕМ ПО ДОГОВОРУ" },
+              { shape: "◆", label: "ВЫ СОХРАНЯЕТЕ ПРАВА И МОЖЕТЕ ВЫВЕСТИ ЗАРАБОТАННУЮ СУММУ" },
+            ].map((item, i) => (
+              <div key={i} className="flex items-start gap-4">
+                <span className="text-2xl font-bold flex-shrink-0 mt-1" style={{ color: "var(--clr-gold)" }}>
+                  {item.shape}
+                </span>
+                <p className="font-bold text-sm leading-relaxed tracking-wider" style={{ color: "var(--clr-black)" }}>
+                  {item.label}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-        <p className="font-montserrat text-xs" style={{ color: "rgba(255,255,255,0.25)" }}>
-          © 2024 ЗВУК · Музыкальная платформа · Дистрибьюция · Продвижение · Продюсирование
+      </section>
+
+      {/* ── ABOUT LABEL ── */}
+      <section className="relative px-5 py-20 overflow-hidden">
+        <FloatingArtists />
+        <div className="relative z-10 max-w-2xl">
+          <h2 className="font-bold leading-none mb-6" style={{ fontSize: "clamp(52px, 12vw, 100px)" }}>
+            SMART SM
+          </h2>
+          <p className="font-bold mb-2" style={{ fontSize: "clamp(20px, 5vw, 36px)" }}>
+            МУЗЫКАЛЬНАЯ КОМПАНИЯ,<br />ОСНОВАННАЯ АЛЕКСАНДРОМ<br />ТРАВКИНЫМ.
+          </p>
+          <p className="font-bold" style={{ fontSize: "clamp(20px, 5vw, 36px)", color: "var(--clr-red)" }}>
+            ДИСТРИБЬЮЦИЯ + ПРОДВИЖЕНИЕ.
+          </p>
+
+          <div className="mt-8 space-y-1">
+            {ARTISTS.slice(0, 6).map(a => (
+              <p key={a} className="font-bold tracking-widest" style={{ fontSize: "clamp(13px, 3vw, 18px)", color: "rgba(255,255,255,0.18)", animationDelay: "0s" }}>
+                {a}
+              </p>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── STATS 2 ── */}
+      <section className="relative px-5 py-16 overflow-hidden">
+        <div className="absolute right-0 top-0 bottom-0 w-1/2 overflow-hidden opacity-30">
+          <img src={GOLD_BG} alt="" className="w-full h-full object-cover" />
+        </div>
+        <div className="relative z-10 max-w-2xl">
+          <p className="font-bold text-base tracking-wider mb-2" style={{ color: "rgba(255,255,255,0.6)" }}>БОЛЕЕ</p>
+          <p className="font-bold leading-none" style={{ fontSize: "clamp(56px, 16vw, 120px)", color: "var(--clr-red)" }}>15 845</p>
+          <h2 className="font-bold leading-none" style={{ fontSize: "clamp(28px, 7vw, 52px)" }}>
+            ИСПОЛНИТЕЛЕЙ<br />ВЫКЛАДЫВАЮТ<br />СВОЮ МУЗЫКУ
+          </h2>
+          <h2 className="font-bold leading-none" style={{ fontSize: "clamp(28px, 7vw, 52px)", color: "var(--clr-red)" }}>
+            ЧЕРЕЗ SMART SM.
+          </h2>
+          <div className="mt-8 space-y-1">
+            {ARTISTS.slice(6).map(a => (
+              <p key={a} className="font-bold tracking-widest" style={{ fontSize: "clamp(13px, 3vw, 17px)", color: "rgba(255,255,255,0.15)" }}>
+                {a}
+              </p>
+            ))}
+          </div>
+
+          <div className="mt-10">
+            <h3 className="font-bold leading-tight" style={{ fontSize: "clamp(22px, 5vw, 38px)" }}>
+              КОЛИЧЕСТВО ТРЕКОВ В<br />НАШЕМ КАТАЛОГЕ
+            </h3>
+            <h3 className="font-bold leading-tight" style={{ fontSize: "clamp(22px, 5vw, 38px)", color: "var(--clr-red)" }}>
+              ПРЕВЫСИЛО 55 361 ПЕСЕН.
+            </h3>
+            <h3 className="font-bold" style={{ fontSize: "clamp(22px, 5vw, 38px)" }}>
+              ЭТО НЕ ПРОСТО ТАК!
+            </h3>
+          </div>
+          <button className="red-btn py-4 rounded-sm mt-8 max-w-sm text-base" onClick={() => scrollTo("distrib")}>
+            СПИСОК НАШИХ РЕЛИЗОВ
+          </button>
+        </div>
+      </section>
+
+      {/* ── ПРЕИМУЩЕСТВА ── */}
+      <section className="px-5 py-16">
+        <p className="text-base tracking-[0.3em] mb-1" style={{ color: "rgba(255,255,255,0.4)" }}>ПРЕИМУЩЕСТВА</p>
+        <h2 className="font-bold mb-10" style={{ fontSize: "clamp(40px, 10vw, 80px)", lineHeight: 0.9 }}>
+          SMART SM
+        </h2>
+
+        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory">
+          {ADVANTAGES.map((adv, i) => (
+            <div
+              key={i}
+              className="flex-shrink-0 snap-start beige-section rounded-sm p-6"
+              style={{ width: "clamp(260px, 80vw, 340px)", minHeight: "280px" }}
+            >
+              <h3 className="font-bold mb-4" style={{ fontSize: "clamp(24px, 6vw, 36px)", color: "var(--clr-red)" }}>
+                {adv.title}
+              </h3>
+              <p className="font-bold text-sm leading-relaxed tracking-wider" style={{ color: "var(--clr-black)" }}>
+                {adv.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── ДИСТРИБЬЮЦИЯ ── */}
+      <section id="distrib" className="px-5 py-16 beige-section relative" style={{ clipPath: "polygon(0 3%, 100% 0%, 100% 97%, 0 100%)", padding: "80px 20px" }}>
+        <div className="max-w-2xl mx-auto">
+          <p className="text-xs tracking-[0.4em] mb-2" style={{ color: "rgba(0,0,0,0.35)" }}>01 / ДИСТРИБЬЮЦИЯ</p>
+          <h2 className="font-bold leading-none mb-6" style={{ fontSize: "clamp(36px, 9vw, 70px)", color: "var(--clr-black)" }}>
+            ВЫГРУЗИТЬ<br /><span style={{ color: "var(--clr-red)" }}>РЕЛИЗ</span>
+          </h2>
+
+          <div className="space-y-4">
+            {[
+              { label: "НАЗВАНИЕ ТРЕКА", ph: "Введите название..." },
+              { label: "ИСПОЛНИТЕЛЬ", ph: "Имя артиста..." },
+            ].map(field => (
+              <div key={field.label}>
+                <label className="block text-xs font-bold tracking-widest mb-2" style={{ color: "rgba(0,0,0,0.45)" }}>
+                  {field.label}
+                </label>
+                <input
+                  placeholder={field.ph}
+                  className="w-full px-4 py-3 font-oswald text-sm outline-none rounded-sm"
+                  style={{ background: "rgba(0,0,0,0.08)", border: "2px solid rgba(0,0,0,0.15)", color: "var(--clr-black)" }}
+                  onFocus={e => (e.target.style.borderColor = "var(--clr-red)")}
+                  onBlur={e => (e.target.style.borderColor = "rgba(0,0,0,0.15)")}
+                />
+              </div>
+            ))}
+
+            <div>
+              <label className="block text-xs font-bold tracking-widest mb-2" style={{ color: "rgba(0,0,0,0.45)" }}>
+                ТИП РЕЛИЗА
+              </label>
+              <div className="flex gap-2">
+                {["Сингл", "EP", "Альбом"].map(t => (
+                  <button key={t} className="flex-1 py-2 rounded-sm font-bold text-sm tracking-wider uppercase transition-all"
+                    style={{ background: "rgba(0,0,0,0.1)", border: "2px solid rgba(0,0,0,0.15)", color: "var(--clr-black)" }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "var(--clr-red)"; e.currentTarget.style.color = "white"; e.currentTarget.style.borderColor = "var(--clr-red)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "rgba(0,0,0,0.1)"; e.currentTarget.style.color = "var(--clr-black)"; e.currentTarget.style.borderColor = "rgba(0,0,0,0.15)"; }}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="border-2 border-dashed rounded-sm p-8 text-center cursor-pointer transition-all"
+              style={{ borderColor: "rgba(0,0,0,0.2)" }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = "var(--clr-red)")}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(0,0,0,0.2)")}
+            >
+              <Icon name="Upload" size={28} className="mx-auto mb-2" style={{ color: "var(--clr-red)" }} />
+              <p className="font-bold text-sm tracking-wider" style={{ color: "rgba(0,0,0,0.5)" }}>
+                ЗАГРУЗИТЬ ТРЕК (WAV / FLAC)
+              </p>
+            </div>
+
+            <div className="border-2 border-dashed rounded-sm p-6 text-center cursor-pointer transition-all"
+              style={{ borderColor: "rgba(0,0,0,0.2)" }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = "var(--clr-gold)")}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(0,0,0,0.2)")}
+            >
+              <Icon name="Image" size={24} className="mx-auto mb-2" style={{ color: "var(--clr-gold)" }} />
+              <p className="font-bold text-xs tracking-wider" style={{ color: "rgba(0,0,0,0.4)" }}>
+                ОБЛОЖКА · 3000×3000 PX
+              </p>
+            </div>
+
+            <button className="red-btn py-4 rounded-sm text-base">
+              ОТПРАВИТЬ РЕЛИЗ
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── ПРОДВИЖЕНИЕ ── */}
+      <section id="promo" className="px-5 py-20 relative overflow-hidden">
+        <FloatingArtists />
+        <div className="relative z-10 max-w-2xl">
+          <p className="text-xs tracking-[0.4em] mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>02 / ПРОДВИЖЕНИЕ</p>
+          <h2 className="font-bold leading-none mb-10" style={{ fontSize: "clamp(36px, 9vw, 70px)" }}>
+            ПРОДВИЖЕНИЕ<br /><span style={{ color: "var(--clr-red)" }}>МУЗЫКИ</span>
+          </h2>
+
+          <div className="grid grid-cols-2 gap-3 mb-10">
+            {PROMO_SERVICES.map((s, i) => (
+              <div key={i} className="p-4 rounded-sm"
+                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--clr-red)"; e.currentTarget.style.background = "rgba(192,24,27,0.08)"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
+              >
+                <span className="text-2xl block mb-2">{s.emoji}</span>
+                <p className="font-bold text-xs tracking-wider leading-snug">{s.label}</p>
+              </div>
+            ))}
+          </div>
+
+          <button className="red-btn py-4 rounded-sm text-base max-w-sm">
+            ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
+          </button>
+        </div>
+      </section>
+
+      {/* ── ПРОДЮСИРОВАНИЕ ── */}
+      <section id="produc" className="beige-section px-5 py-20 relative" style={{ clipPath: "polygon(0 3%, 100% 0%, 100% 97%, 0 100%)", padding: "80px 20px" }}>
+        <div className="max-w-2xl mx-auto">
+          <p className="text-xs tracking-[0.4em] mb-2" style={{ color: "rgba(0,0,0,0.35)" }}>03 / ПРОДЮСИРОВАНИЕ</p>
+          <h2 className="font-bold leading-none mb-10" style={{ fontSize: "clamp(36px, 9vw, 70px)", color: "var(--clr-black)" }}>
+            ПРОДЮСИРОВАНИЕ<br /><span style={{ color: "var(--clr-red)" }}>АРТИСТА</span>
+          </h2>
+
+          <div className="space-y-4">
+            {[
+              {
+                title: "СВЕДЕНИЕ И МАСТЕРИНГ",
+                items: ["Студийное сведение треков", "Мастеринг под стриминги", "Stem-мастеринг", "Исправление тональности"],
+              },
+              {
+                title: "СОЗДАНИЕ ОБЛОЖКИ",
+                items: ["Дизайн обложки сингла / альбома", "Адаптация под все платформы", "Фирменный стиль артиста", "Концепт и арт-ворк"],
+              },
+            ].map((block, i) => (
+              <div key={i} className="p-6 rounded-sm"
+                style={{ background: "rgba(0,0,0,0.06)", border: "2px solid rgba(0,0,0,0.1)" }}>
+                <h3 className="font-bold mb-4 text-xl" style={{ color: "var(--clr-red)" }}>{block.title}</h3>
+                <ul className="space-y-2">
+                  {block.items.map(item => (
+                    <li key={item} className="flex items-center gap-2 font-bold text-sm tracking-wider" style={{ color: "var(--clr-black)" }}>
+                      <span style={{ color: "var(--clr-gold)" }}>◆</span> {item}
+                    </li>
+                  ))}
+                </ul>
+                <button className="red-btn py-3 rounded-sm text-sm mt-5">
+                  ЗАКАЗАТЬ
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FOUNDER ── */}
+      <section id="founder" className="px-5 py-20 relative overflow-hidden">
+        <div className="relative z-10 max-w-2xl">
+          <p className="text-xs tracking-[0.4em] mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>ОСНОВАТЕЛЬ</p>
+          <h2 className="font-bold leading-none mb-8" style={{ fontSize: "clamp(32px, 8vw, 64px)" }}>
+            АЛЕКСАНДР<br />ТРАВКИН
+          </h2>
+
+          <div className="rounded-sm overflow-hidden mb-8 relative" style={{ maxWidth: "360px" }}>
+            <img
+              src={FOUNDER_PHOTO}
+              alt="Александр Травкин"
+              className="w-full object-cover object-top"
+              style={{ maxHeight: "400px" }}
+            />
+            <div className="absolute bottom-0 left-0 right-0 p-4"
+              style={{ background: "linear-gradient(to top, rgba(17,17,17,0.9), transparent)" }}>
+              <p className="font-bold text-lg tracking-widest">АЛЕКСАНДР ТРАВКИН</p>
+              <p className="text-sm tracking-wider" style={{ color: "var(--clr-gold)" }}>ОСНОВАТЕЛЬ SMART SM</p>
+            </div>
+          </div>
+
+          <p className="font-bold leading-relaxed mb-8" style={{ fontSize: "clamp(16px, 4vw, 24px)", color: "rgba(255,255,255,0.75)" }}>
+            МЫ ЗАНИМАЕМСЯ ДИСТРИБЬЮЦИЕЙ МУЗЫКИ И МЕНЕДЖМЕНТОМ АРТИСТОВ. SMART SM — ЭТО ТВОЙ ПУТЬ К МИРОВЫМ ПЛОЩАДКАМ.
+          </p>
+
+          <button className="red-btn py-4 rounded-sm text-base max-w-sm" onClick={() => scrollTo("distrib")}>
+            ВЫЛОЖИТЬ МУЗЫКУ
+          </button>
+        </div>
+      </section>
+
+      {/* ── FOOTER ── */}
+      <footer className="px-5 py-10 text-center" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+        <p className="font-bold text-2xl tracking-[0.2em] mb-2">SMART SM</p>
+        <p className="text-xs tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>
+          © 2024 SMART SM · ДИСТРИБЬЮЦИЯ · ПРОДВИЖЕНИЕ · ПРОДЮСИРОВАНИЕ
+        </p>
+        <p className="text-xs mt-1 tracking-wider" style={{ color: "rgba(255,255,255,0.2)" }}>
+          ОСНОВАТЕЛЬ — АЛЕКСАНДР ТРАВКИН
         </p>
       </footer>
     </div>
