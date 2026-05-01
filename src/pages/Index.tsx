@@ -2,7 +2,7 @@ import { useState } from "react";
 import Icon from "@/components/ui/icon";
 
 const GOLD_BG = "https://cdn.poehali.dev/projects/e9234494-31a6-4374-b4b7-bda5385165ef/files/89d30891-7abf-4770-ab1c-a366995e5a1d.jpg";
-const FOUNDER_PHOTO = "https://cdn.poehali.dev/projects/e9234494-31a6-4374-b4b7-bda5385165ef/bucket/45b1bed5-c9ba-42b8-b0bc-d5f6c8893b1e.png";
+const FOUNDER_PHOTO = "https://cdn.poehali.dev/projects/e9234494-31a6-4374-b4b7-bda5385165ef/bucket/f4ce4ae8-7870-42f0-a67e-ea02a3fe9f39.jpeg";
 
 const ARTISTS = [
   "ТРИ ДНЯ ДОЖДЯ", "NALIM", "SLYKT", "PALMDROPOV",
